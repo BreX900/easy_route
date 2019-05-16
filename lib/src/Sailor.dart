@@ -1,12 +1,8 @@
-import 'package:synchronized/synchronized.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import 'SwipeBackObserver.dart';
 
 
+/*
 typedef Widget RouteBuilder(EasyRoute params);
+
 
 
 class Sailor {
@@ -18,13 +14,13 @@ class Sailor {
   /// onGenerateRoute: onGenerateRoute,
   Route<dynamic> onGenerateRoute<T extends EasyRoute>(RouteSettings settings) {
     return CupertinoPageRoute<T>(
-        builder: (context) {
-          final screenBuilder = routes[settings.name];
-          return screenBuilder != null ?
-            screenBuilder(settings.arguments) :
-            Material(child: Center(child: Text("Page Not Found",),),);
-        },
-        settings: settings,
+      builder: (context) {
+        final screenBuilder = routes[settings.name];
+        return screenBuilder != null ?
+          screenBuilder(settings.arguments) :
+          Material(child: Center(child: Text("Page Not Found",),),);
+      },
+      settings: settings,
     );
   }
 
@@ -62,7 +58,7 @@ abstract class EasyRoute {
   final Key key;
 
   EasyRoute(this.key);
-}
+}*/
 
 
 

@@ -1,8 +1,8 @@
-name: sailor
+name: easy_route
 description: A new Flutter project.
 version: 0.0.1
 author: Simone Bressan
-homepage:
+homepage: https://github.com/BreX900/sailor
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
