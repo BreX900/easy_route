@@ -1,17 +1,17 @@
 name: easy_route
 description: A new Flutter project.
-version: 0.0.1
+version: 0.0.2+1
 author: Simone Bressan
 homepage: https://github.com/BreX900/sailor
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
-
+# flutter packages pub publish
 dependencies:
   flutter:
     sdk: flutter
 
-  synchronized: ^2.1.0
+  # synchronized: any
 
 dev_dependencies:
   flutter_test:
