@@ -8,16 +8,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: EasyRouter.INITIAL_ROUTE,
-      onGenerateRoute: EasyRouter.onGenerateRoute((_) => HomeScreen()),
+      initialRoute: HomeScreen.ROUTE,
+      onGenerateRoute: EasyRouter.onGenerateRouteBuilder((_) => HomeScreen(), HomeScreen.ROUTE),
       navigatorObservers: <NavigatorObserver>[ SwipeBackObserver(), ],
     );
   }
 }
 
 
-class HomeScreen extends StatelessWidget implements EasyRoute {
-  static const ROUTE = EasyRouter.INITIAL_ROUTE;
+class HomeScreen extends StatelessWidget implements WidgetRoute {
+  static const ROUTE = "HomeScreen";
 
   @override
   String get route => ROUTE;
@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget implements EasyRoute {
 }
 
 
-class SecondScreen extends StatelessWidget implements EasyRoute {
+class SecondScreen extends StatelessWidget implements WidgetRoute {
   static const ROUTE = 'second';
   @override
   String get route => ROUTE;
@@ -59,7 +59,7 @@ class SecondScreen extends StatelessWidget implements EasyRoute {
 }
 
 
-class AnotherScreen extends StatelessWidget implements EasyRoute {
+class AnotherScreen extends StatelessWidget implements WidgetRoute {
   static const ROUTE = 'another';
   @override
   String get route => ROUTE;
