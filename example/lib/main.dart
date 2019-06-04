@@ -16,12 +16,16 @@ class MyApp extends StatelessWidget {
 }
 
 
-class HomeScreen extends StatelessWidget implements WidgetRoute {
+class HomeScreen extends StatefulWidget implements WidgetRoute {
   static const ROUTE = "HomeScreen";
+  @override
+  String get route => HomeScreen.ROUTE;
 
   @override
-  String get route => ROUTE;
+  _HomeScreenState createState() => _HomeScreenState();
+}
 
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
