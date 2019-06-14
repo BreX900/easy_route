@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_route/src/Common.dart';
 import 'package:flutter/cupertino.dart' as cp;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart' as mt;
@@ -14,39 +15,58 @@ class EasyRouter {
 
   /// Add it to MaterialApp for automatic generation
   /// onGenerateRoute: EasyRouter.onGenerateRoute((context) => HomeScreen()),
-  static RouteFactory onGenerateRouteBuilder(WidgetRouteBuilder builder, String initialRoute,
-      {bool maintainState: true}) {
+  static RouteFactory onGenerateRouteBuilder(WidgetRouteBuilder builder, String initialRoute, {
+    Options homeOptions: const Options(transition: Transition.MATERIAL), Options defaultOptions: const Options.def(),
+  }) {
     assert(builder != null);
     assert(initialRoute != null);
-    assert(maintainState != null);
-    return (RouteSettings settings) {
-      if (settings.name == initialRoute) {
-        return mt.MaterialPageRoute(builder: builder,
-            settings: settings, maintainState: maintainState);
-      }
+    assert(defaultOptions != null);
 
-      return cp.CupertinoPageRoute(builder: (context) => settings.arguments,
-        settings: settings, maintainState: maintainState,);
+    return (RouteSettings settings) {
+      // Check is the first route
+      final argument = settings.name == initialRoute ?
+        _Argument.builder(builder, homeOptions) :
+        settings.arguments as _Argument;
+
+      if ((argument.options.transition??defaultOptions.transition) == Transition.MATERIAL) {
+        return mt.MaterialPageRoute(
+          builder: argument.builder,
+          settings: settings,
+          maintainState: argument.options.maintainState ?? defaultOptions.maintainState,
+        );
+      } else {
+        return cp.CupertinoPageRoute(
+          builder: argument.builder,
+          settings: settings,
+          maintainState: argument.options.maintainState ?? defaultOptions.maintainState,
+        );
+      }
     };
   }
 
   /// Add it to MaterialApp for automatic generation
   /// onGenerateRoute: EasyRouter.onGenerateRoute(HomeScreen()),
-  static RouteFactory onGenerateRoute(WidgetRoute home, {bool maintainState: true}) {
-    return (RouteSettings settings) {
-      if (settings.name == home.route) {
-        return mt.MaterialPageRoute(builder: (_) => home, settings: settings);
-      }
-
-      return cp.CupertinoPageRoute(builder: (context) => settings.arguments, settings: settings,);
-    };
+  static RouteFactory onGenerateRoute(WidgetRoute home, {
+    Options homeOptions, Options defaultOptions: const Options.def(),
+  }) {
+    return onGenerateRouteBuilder((_) => home, home.route,
+      homeOptions:homeOptions, defaultOptions: defaultOptions,
+    );
   }
 
   //static final Path _path = Path(path: '');
 
+  /// Opens a new screen only if the current screen is not the first one,
+  /// otherwise it closes the current screen
+  static Future<dynamic> pushSecondElseClose(BuildContext context, WidgetRouteBuilder builder, {
+    Options options,
+  }) async {
+    return canPop(context) ? pop(context) : await push(context, builder(context), options: options);
+  }
+
   /// Open new Screen
-  static Future<dynamic> push(BuildContext context, WidgetRoute screen) async {
-    return Navigator.pushNamed(context, screen.route, arguments: screen,);
+  static Future<dynamic> push(BuildContext context, WidgetRoute screen, {Options options}) async {
+    return await Navigator.pushNamed(context, screen.route, arguments: _Argument(screen, options),);
   }
 
   /// Close last screen
@@ -60,23 +80,47 @@ class EasyRouter {
   }
 
   /// Close all the screens up to the routeName
-  static Future<dynamic> popUntil(BuildContext context, String routeName) async {
-    return Navigator.popUntil(context, ModalRoute.withName(routeName),);
+  static void popUntil(BuildContext context, String routeName) {
+    Navigator.popUntil(context, ModalRoute.withName(routeName),);
   }
 
-  /// Close all the screens up to the routeName/screen.route and push screen
-  static Future<Object> pushNamedAndRemoveUntil(BuildContext context, WidgetRoute screen, {String routeName}) async {
-    return Navigator.pushNamedAndRemoveUntil(context, screen.route, ModalRoute.withName(routeName??screen.route), arguments: screen,);
+  /// Close all the screens and push screen
+  static Future<Object> pushAndRemoveAll(BuildContext context, WidgetRoute screen, {
+    Options options: const Options(transition: Transition.MATERIAL),
+  }) async {
+    return await pushAndRemoveUntil(context, screen, (_) => false, options: options);
+  }
+
+  /// Close all the screens up to the routeName and push screen
+  static Future<Object> pushAndRemoveUntilRoute(BuildContext context, WidgetRoute screen, String routeName, {
+    Options options,
+  }) async {
+    return await pushAndRemoveUntil(context, screen, ModalRoute.withName(routeName), options: options);
+  }
+
+  /// Close all the screens up to the [RoutePredicate] and push screen
+  static Future<Object> pushAndRemoveUntil(BuildContext context, WidgetRoute screen, RoutePredicate predicate, {
+    Options options,
+  }) async {
+    return await Navigator.pushNamedAndRemoveUntil(context, screen.route, predicate,
+      arguments: _Argument(screen, options),
+    );
   }
 
   /// Replace current screen with a destroy animation for current screen
-  static Future<Object> pushReplacement(BuildContext context, WidgetRoute screen) async {
-    return Navigator.pushReplacementNamed(context, screen.route, arguments: screen,);
+  static Future<Object> pushReplacement(BuildContext context, WidgetRoute screen, {
+    Options options,
+  }) async {
+    return await Navigator.pushReplacementNamed(context, screen.route,
+      arguments: _Argument(screen, options),
+    );
   }
 
   /// Replace current screen with swipe animation for current screen
-  static Future<dynamic> popAndPush(BuildContext context, WidgetRoute screen) async {
-    return Navigator.popAndPushNamed(context, screen.route, arguments: screen,);
+  static Future<dynamic> popAndPush(BuildContext context, WidgetRoute screen, {
+    Options options,
+  }) async {
+    return await Navigator.popAndPushNamed(context, screen.route, arguments: _Argument(screen, options),);
   }
 
 
@@ -105,8 +149,32 @@ abstract class WidgetRoute implements Widget {
 }
 
 
+class _Argument {
+  final WidgetRouteBuilder builder;
+  final Options options;
+
+  _Argument(
+    WidgetRoute screen,
+    [Options options]
+  ) : this.builder((_) => screen, options);
+
+  _Argument.builder(
+    this.builder,
+    [Options options]
+  ) : this.options = options??const Options();
+}
+
+
+
+
+
+
+
+
+
 /// Add it to MaterialApp
 /// navigatorObservers: <NavigatorObserver>[ SwipeBackObserver(), ],
+@deprecated
 class SwipeBackObserver extends NavigatorObserver {
   void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
     //EasyRouter._path.setPath(route.settings.name);
@@ -128,7 +196,7 @@ class SwipeBackObserver extends NavigatorObserver {
   void didStopUserGesture() { print('didStopUserGesture'); }
 }
 
-
+@deprecated
 class Path {
   static const BAR = '/';
   String _path;
