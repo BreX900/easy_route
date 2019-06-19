@@ -30,7 +30,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  easy_router:
+  easy_route:
     path: ../../easy_route
 
 # For information on the generic Dart part of this file, see the
