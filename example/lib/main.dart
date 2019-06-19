@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:easy_router/easy_route.dart';
+import 'package:easy_route/easy_route.dart';
 
 
 void main() => runApp(MyApp());
