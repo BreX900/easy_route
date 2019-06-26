@@ -148,6 +148,19 @@ abstract class WidgetRoute implements Widget {
   String get route;
 }
 
+class ScreenRoute extends StatelessWidget implements WidgetRoute{
+  final String route;
+  final Widget child;
+
+  const ScreenRoute({Key key, @required this.route, @required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
+}
+
 
 class _Argument {
   final WidgetRouteBuilder builder;
