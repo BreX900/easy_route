@@ -1,22 +1,23 @@
 import 'dart:async';
 
+import 'package:bloc_provider/bloc_provider.dart';
 import 'package:easy_route/src/Common.dart';
 import 'package:flutter/cupertino.dart' as cp;
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart' as mt;
 
 
-typedef WidgetRoute WidgetRouteBuilder(BuildContext context);
 
+/// !!! DEPRECATED !!!
 /// First Screen please reference EsyRouter.HOME
-/// Complete Material App with 'onGenerateRoute' and 'navigatorObservers'
+/// Complete Material App with 'onGenerateRoute'
 class EasyRouter {
   EasyRouter._();
 
   /// Add it to MaterialApp for automatic generation
   /// onGenerateRoute: EasyRouter.onGenerateRoute((context) => HomeScreen()),
   static RouteFactory onGenerateRouteBuilder(WidgetRouteBuilder builder, String initialRoute, {
-    Options homeOptions: const Options(transition: Transition.MATERIAL), Options defaultOptions: const Options.def(),
+    PocketRouteOptions homeOptions: const PocketRouteOptions(transition: Transition.material), PocketRouteOptions defaultOptions: const PocketRouteOptions.def(),
   }) {
     assert(builder != null);
     assert(initialRoute != null);
@@ -25,10 +26,10 @@ class EasyRouter {
     return (RouteSettings settings) {
       // Check is the first route
       final argument = settings.name == initialRoute ?
-        _Argument.builder(builder, homeOptions) :
-        settings.arguments as _Argument;
+        Argument.builder(builder, homeOptions) :
+        settings.arguments as Argument;
 
-      if ((argument.options.transition??defaultOptions.transition) == Transition.MATERIAL) {
+      if ((argument.options.transition??defaultOptions.transition) == Transition.material) {
         return mt.MaterialPageRoute(
           builder: argument.builder,
           settings: settings,
@@ -47,7 +48,7 @@ class EasyRouter {
   /// Add it to MaterialApp for automatic generation
   /// onGenerateRoute: EasyRouter.onGenerateRoute(HomeScreen()),
   static RouteFactory onGenerateRoute(WidgetRoute home, {
-    Options homeOptions, Options defaultOptions: const Options.def(),
+    PocketRouteOptions homeOptions, PocketRouteOptions defaultOptions: const PocketRouteOptions.def(),
   }) {
     return onGenerateRouteBuilder((_) => home, home.route,
       homeOptions:homeOptions, defaultOptions: defaultOptions,
@@ -59,14 +60,14 @@ class EasyRouter {
   /// Opens a new screen only if the current screen is not the first one,
   /// otherwise it closes the current screen
   static Future<dynamic> pushSecondElseClose(BuildContext context, WidgetRouteBuilder builder, {
-    Options options,
+    PocketRouteOptions options,
   }) async {
     return canPop(context) ? pop(context) : await push(context, builder(context), options: options);
   }
 
   /// Open new Screen
-  static Future<dynamic> push(BuildContext context, WidgetRoute screen, {Options options}) async {
-    return await Navigator.pushNamed(context, screen.route, arguments: _Argument(screen, options),);
+  static Future<dynamic> push(BuildContext context, WidgetRoute screen, {PocketRouteOptions options}) async {
+    return await Navigator.pushNamed(context, screen.route, arguments: Argument(screen, options),);
   }
 
   /// Close last screen
@@ -86,41 +87,41 @@ class EasyRouter {
 
   /// Close all the screens and push screen
   static Future<Object> pushAndRemoveAll(BuildContext context, WidgetRoute screen, {
-    Options options: const Options(transition: Transition.MATERIAL),
+    PocketRouteOptions options: const PocketRouteOptions(transition: Transition.material),
   }) async {
     return await pushAndRemoveUntil(context, screen, (_) => false, options: options);
   }
 
   /// Close all the screens up to the routeName and push screen
   static Future<Object> pushAndRemoveUntilRoute(BuildContext context, WidgetRoute screen, String routeName, {
-    Options options,
+    PocketRouteOptions options,
   }) async {
     return await pushAndRemoveUntil(context, screen, ModalRoute.withName(routeName), options: options);
   }
 
   /// Close all the screens up to the [RoutePredicate] and push screen
   static Future<Object> pushAndRemoveUntil(BuildContext context, WidgetRoute screen, RoutePredicate predicate, {
-    Options options,
+    PocketRouteOptions options,
   }) async {
     return await Navigator.pushNamedAndRemoveUntil(context, screen.route, predicate,
-      arguments: _Argument(screen, options),
+      arguments: Argument(screen, options),
     );
   }
 
   /// Replace current screen with a destroy animation for current screen
   static Future<Object> pushReplacement(BuildContext context, WidgetRoute screen, {
-    Options options,
+    PocketRouteOptions options,
   }) async {
     return await Navigator.pushReplacementNamed(context, screen.route,
-      arguments: _Argument(screen, options),
+      arguments: Argument(screen, options),
     );
   }
 
   /// Replace current screen with swipe animation for current screen
   static Future<dynamic> popAndPush(BuildContext context, WidgetRoute screen, {
-    Options options,
+    PocketRouteOptions options,
   }) async {
-    return await Navigator.popAndPushNamed(context, screen.route, arguments: _Argument(screen, options),);
+    return await Navigator.popAndPushNamed(context, screen.route, arguments: Argument(screen, options),);
   }
 
 
@@ -141,41 +142,6 @@ class EasyRouter {
   }*/
 }
 
-/// Example:
-/// static const ROUTE = 'home';
-/// String get route => ROUTE;
-abstract class WidgetRoute implements Widget {
-  String get route;
-}
-
-class ScreenRoute extends StatelessWidget implements WidgetRoute{
-  final String route;
-  final Widget child;
-
-  const ScreenRoute({Key key, @required this.route, @required this.child,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return child;
-  }
-}
-
-
-class _Argument {
-  final WidgetRouteBuilder builder;
-  final Options options;
-
-  _Argument(
-    WidgetRoute screen,
-    [Options options]
-  ) : this.builder((_) => screen, options);
-
-  _Argument.builder(
-    this.builder,
-    [Options options]
-  ) : this.options = options??const Options();
-}
 
 
 

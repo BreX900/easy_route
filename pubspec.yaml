@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  bloc_provider: any
+  fluro: any
+
   # synchronized: any
 
 dev_dependencies:
