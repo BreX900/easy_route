@@ -137,6 +137,18 @@ class PocketRouter {
     }
   }
 
+  void popBeforeMe(BuildContext context, String name) {
+    bool isMe = false;
+    Navigator.popUntil(context, (route) {
+      if (isMe)
+        return false;
+      if (route.settings.name == name) {
+        isMe = true;
+      }
+      return true;
+    });
+  }
+
   /// Close all the screens and push screen
   Future<Object> pushAndRemoveAll(BuildContext context, String name, {
     WidgetBuilder builder,
