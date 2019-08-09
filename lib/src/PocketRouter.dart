@@ -117,8 +117,8 @@ class PocketRouter {
   }
 
   /// Close last screen
-  bool pop(BuildContext context) {
-    return Navigator.pop(context);
+  bool pop<R extends Object>(BuildContext context, [R result]) {
+    return Navigator.pop<R>(context, result);
   }
 
   /// Close last screen in safe Mode
