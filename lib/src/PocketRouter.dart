@@ -57,13 +57,18 @@ class PocketRouter {
   void registers(Map<String, WidgetBuilder> routes) => _routes.addAll(routes);
   void register(String name, WidgetBuilder builder) => _routes[name] = builder;
 
-  PocketRouter.internal({
+  PocketRouter.init({
     HashMap<String, WidgetBuilder> routes,
-  }) : this._routes = routes??HashMap();
+  }) : assert(routes != null), this._routes = routes {
+    _instance = this;
+  }
 
-  static PocketRouter _instance = PocketRouter.internal();
+  static PocketRouter _instance;
 
-  factory PocketRouter() => _instance;
+  factory PocketRouter() {
+    assert(_instance != null);
+    return _instance;
+  }
 
   RouteFactory onGenerateRouteBuilder({
     PocketRouteOptions initialOptions: const PocketRouteOptions.material(),
