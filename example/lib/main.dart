@@ -9,8 +9,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       initialRoute: HomeScreen.ROUTE,
-      onGenerateRoute: EasyRouter.onGenerateRouteBuilder((_) => HomeScreen(), HomeScreen.ROUTE),
-      navigatorObservers: <NavigatorObserver>[ SwipeBackObserver(), ],
+//      onGenerateRoute: EasyRouter.onGenerateRouteBuilder((_) => HomeScreen(), HomeScreen.ROUTE),
+//      navigatorObservers: <NavigatorObserver>[ SwipeBackObserver(), ],
     );
   }
 }
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: InkWell(
           radius: 200,
-          onTap: () => EasyRouter.push(context, SecondScreen()),
+//          onTap: () => EasyRouter.push(context, SecondScreen()),
           child: Text("Home Screen"),
         ),
       ),
@@ -54,7 +54,7 @@ class SecondScreen extends StatelessWidget implements WidgetRoute {
       child: Center(
         child: InkWell(
           radius: 200,
-          onTap: () => EasyRouter.popAndPush(context, AnotherScreen()),
+//          onTap: () => EasyRouter.popAndPush(context, AnotherScreen()),
           child: Text("Second Screen"),
         ),
       ),
@@ -75,7 +75,7 @@ class AnotherScreen extends StatelessWidget implements WidgetRoute {
       child: Center(
         child: InkWell(
           radius: 200,
-          onTap: () => EasyRouter.popUntil(context, HomeScreen.ROUTE),
+//          onTap: () => EasyRouter.popUntil(context, HomeScreen.ROUTE),
           child: Text("Another Screen"),
         ),
       ),
