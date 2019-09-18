@@ -34,9 +34,9 @@ class PocketRouter {
   void register(String name, WidgetBuilder builder) => _routes[name] = builder;
 
   PocketRouter.init({
-    @required HashMap<String, WidgetBuilder> routes,
+    @required Map<String, WidgetBuilder> routes,
   })  : assert(routes != null),
-        this._routes = routes {
+        this._routes = HashMap.of(routes) {
     _instance = this;
   }
 
